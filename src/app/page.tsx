@@ -1,7 +1,6 @@
-import Link from "next/link";
-import {images} from "next/dist/build/webpack/config/blocks/images";
 import {db} from "~/server/db";
-import * as console from "node:console";
+
+export const dynamic = "force-dynamic"
 
 const mockData = [
   {
