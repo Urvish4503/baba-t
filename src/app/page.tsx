@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {images} from "next/dist/build/webpack/config/blocks/images";
+import {db} from "~/server/db";
+import * as console from "node:console";
 
 const mockData = [
   {
@@ -84,17 +86,23 @@ const mockData = [
   },
 ];
 
-const mockImages = mockData.map((data, index): {id: number, url: string}  => ({
+const mockImages = mockData.map((data, index)  => ({
   id: index + 1,
   url: data.url,
 }))
 
-export default function HomePage() {
+export default async function HomePage() {
+  const posts = await db.query.posts.findMany()
+  console.log(posts)
   return (
     <main className="">
       <div className="flex flex-wrap gap-4">{
-        [...mockImages, ...mockImages].map((image) => (
-            <div key={image.id} className="w-48">
+        posts.map((post)=> (
+            <div key={post.id}> {post.name}</div>
+        ))
+      }{
+        [...mockImages, ...mockImages].map((image, index) => (
+            <div key={image.id + "-" + index} className="w-48">
               <img src={image.url} alt="image" />
             </div>
         ))
