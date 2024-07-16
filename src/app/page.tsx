@@ -1,40 +1,35 @@
-import {db} from "~/server/db";
-import {SignedIn, SignedOut} from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { getMyImages } from "~/server/queries";
 
 export const dynamic = "force-dynamic";
 
 async function Images() {
-  const posts = await db.query.images.findMany({
-    orderBy: (model, {desc}) => desc(model.id),
-  });
+  const images = await getMyImages();
   return (
     <div>
       <div className="flex flex-wrap gap-4">
-      {posts.length === 0 ? "No images" : 
-        posts.map((post) => (
-          <div key={post.id} className="flex w-48 flex-col">
-            <img src={post.url} alt={post.name}/>
-            {post.name}
-          </div>
-        ))
-      }
+        {images.length === 0
+          ? "No images"
+          : images.map((image) => (
+              <div key={image.id} className="flex w-48 flex-col">
+                <img src={image.url} alt={image.name} />
+                {image.name}
+              </div>
+            ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default async function HomePage() {
   return (
     <main className="">
       <SignedOut>
-        <div className="w-full h-full text-2xl text-center">
-          Please sign in
-        </div>
+        <div className="h-full w-full text-center text-2xl">Please sign in</div>
       </SignedOut>
       <SignedIn>
-        <Images/>
+        <Images />
       </SignedIn>
-
     </main>
   );
 }
