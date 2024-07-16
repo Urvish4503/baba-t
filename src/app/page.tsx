@@ -10,13 +10,15 @@ async function Images() {
   return (
     <div>
       <div className="flex flex-wrap gap-4">
-        {posts.map((post) => (
+      {posts.length === 0 ? "No images" : 
+        posts.map((post) => (
           <div key={post.id} className="flex w-48 flex-col">
             <img src={post.url} alt={post.name}/>
+            {post.name}
           </div>
-        ))}
+        ))
+      }
       </div>
-      Hello This in still in progress
     </div>
   )
 }

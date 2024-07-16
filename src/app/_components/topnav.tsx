@@ -9,7 +9,7 @@ export function Topnav() {
 
   return (
     <nav className="flex w-full items-center justify-between border-b p-4 text-xl font-semibold">
-      <div>Hey</div>
+      <div>Cool Name</div>
       <div className="flex flex-row">
         <SignedOut>
           <SignInButton />
