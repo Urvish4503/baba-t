@@ -9,6 +9,8 @@ import { Topnav } from "./_components/topnav";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
+import { Toaster } from "./../components/ui/sonner";
+import { CSPostHogProvider } from "./_analytics/provider";
 
 export const metadata: Metadata = {
   title: "Baba t",
@@ -25,17 +27,20 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`font-sans ${GeistSans.variable} dark`}>
-        <body>
-          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-          <div className="grid h-screen grid-rows-[auto,1fr]">
-            <Topnav />
-            <main className="overflow-y-scroll">{children}</main>
-          </div>
-          {modal}
-          <div id="modal-root" />
-        </body>
-      </html>
+      <CSPostHogProvider>
+        <html lang="en" className={`font-sans ${GeistSans.variable} dark`}>
+          <body>
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            <div className="grid h-screen grid-rows-[auto,1fr]">
+              <Topnav />
+              <main className="overflow-y-scroll">{children}</main>
+            </div>
+            {modal}
+            <div id="modal-root" />
+            <Toaster />
+          </body>
+        </html>
+      </CSPostHogProvider>
     </ClerkProvider>
   );
 }

@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useUploadThing } from "~/app/utils/uploadthing";
+import { toast } from "sonner";
+import { usePostHog } from "posthog-js/react";
 
-// inferred input off useUploadThing
 type Input = Parameters<typeof useUploadThing>;
 
 const useUploadThingInputProps = (...args: Input) => {
@@ -72,34 +73,32 @@ function LoadingSpinnerSVG() {
 export function SimpleUploadButton() {
   const router = useRouter();
 
-  //   const { inputProps } = useUploadThingInputProps("imageUploader", {
-  //     onUploadBegin() {
-  //       toast(
-  //         <div className="flex items-center gap-2 text-white">
-  //           <LoadingSpinnerSVG /> <span className="text-lg">Uploading...</span>
-  //         </div>,
-  //         {
-  //           duration: 100000,
-  //           id: "upload-begin",
-  //         },
-  //       );
-  //     },
-  //     onUploadError(error) {
-  //       toast.dismiss("upload-begin");
-  //       toast.error("Upload failed");
-  //     },
-  //     onClientUploadComplete() {
-  //       toast.dismiss("upload-begin");
-  //       toast("Upload complete!");
-
-  //       router.refresh();
-  //     },
-  //   });
+  const posthog = usePostHog()
 
   const { inputProps } = useUploadThingInputProps("imageUploader", {
+    onUploadProgress() {
+      posthog.capture("upload_progress");
+      toast(
+        <div className="flex items-center gap-2 text-white">
+          <LoadingSpinnerSVG /> <span className="text-lg">Uploading...</span>
+        </div>,
+        {
+          duration: 100000,
+          id: "upload-begin",
+        },
+      );
+    },
     onClientUploadComplete() {
-        router.refresh();
-    }
+      router.refresh();
+      posthog.capture("upload_complete");
+      toast.dismiss("upload-begin");
+      toast("Upload complete!");
+    },
+    onUploadError(_error) {
+      posthog.capture("upload_error");
+      toast.dismiss("upload-begin");
+      toast.error("Upload failed");
+    },
   });
 
   return (
